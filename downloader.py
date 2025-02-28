@@ -1,5 +1,6 @@
 import instaloader
 from datetime import date
+from concurrent.futures import ThreadPoolExecutor
 
 
 def download_user_reels(
@@ -44,3 +45,14 @@ def download_user_reels(
         print(f"❌ Error: El usuario @{username} no existe")
     except Exception as e:
         print(f"❌ Error inesperado: {str(e)}")
+
+
+def multidownload(
+    users: list[str], start_date: date, end_date: date, output_dir: str, limit: int
+) -> None:
+    # Hago una pool de hilos donde tiro todas las descargaws
+    with ThreadPoolExecutor(max_workers=limit) as pool:
+        for user in users:
+            _ = pool.submit(download_user_reels, user, start_date, end_date, output_dir)
+
+    print("Finalizado con exito ✅")
